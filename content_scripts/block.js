@@ -2,8 +2,10 @@
   function ready() {
     if(!document.getElementById('matchu-pomodoro-extension-overlay')) {
       var overlay = document.createElement('div'), lines = [
-        chrome.i18n.getMessage("site_blocked_info"),
-        chrome.i18n.getMessage("site_blocked_motivator")
+        "Offline!",
+        "Git to work!"
+        // chrome.i18n.getMessage("site_blocked_info"),
+        // chrome.i18n.getMessage("site_blocked_motivator")
       ], p, img = document.createElement('img');
       overlay.id = 'matchu-pomodoro-extension-overlay';
       overlay.style.position = 'fixed';
@@ -17,11 +19,9 @@
       overlay.style.textAlign = 'center';
       overlay.style.color = '#000';
       overlay.style.font = 'normal normal normal 16px/1 sans-serif';
-      
-      img.src = chrome.extension.getURL('icons/work_full.png');
+      img.src = chrome.extension.getURL('icons/offline_full.png');
       img.style.marginBottom = '1em';
       overlay.appendChild(img);
-      
       for(var i in lines) {
         p = document.createElement('p');
         p.innerText = lines[i];
@@ -31,7 +31,6 @@
       document.body.appendChild(overlay);
     }
   }
-  
   if(typeof document === 'undefined') {
     window.addEventListener("DOMContentLoaded", ready);
   } else {
