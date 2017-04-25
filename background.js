@@ -1,3 +1,5 @@
+// This is adapted from matchu's [Strict Workflow](https://github.com/matchu/Strict-Workflow)
+
 //  Constants
 var PREFS = loadPrefs(), RING = new Audio("ding.ogg"), ringLoaded = false;
 loadRingIfNecessary();
