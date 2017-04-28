@@ -1,7 +1,7 @@
 // This is adapted from matchu's [Strict Workflow](https://github.com/matchu/Strict-Workflow)
 
 //  Constants
-var PREFS = loadPrefs(), RING = new Audio("ding.ogg"), ringLoaded = false;
+var PREFS = defaultPrefs(), RING = new Audio("ding.ogg"), ringLoaded = false;
 loadRingIfNecessary();
 
 function defaultPrefs() {
@@ -9,32 +9,17 @@ function defaultPrefs() {
     siteList: ['marcpickett1.github.io', '127.0.0.1:4000', 'marcpickett.com'],
     duration: 25 * 60,
     shouldRing: true}}
-function loadPrefs() {
-  if(typeof localStorage['prefs'] !== 'undefined') {
-    return JSON.parse(localStorage['prefs']);
-  } else {return savePrefs(defaultPrefs());}}
-function savePrefs(prefs) {
-  localStorage['prefs'] = JSON.stringify(prefs);
-  return prefs;
-}
-function setPrefs(prefs) {
-  PREFS = savePrefs(prefs);
-  loadRingIfNecessary();
-  return prefs;
-}
+
 function loadRingIfNecessary () {
   if(!ringLoaded) {
     RING.onload = function () {console.log('ring loaded'); ringLoaded = true;}
-    RING.load();
-  }}
-
+    RING.load();}}
 var ICONS = {ACTION: {CURRENT: {}}, FULL: {},},
 iconTypeS = ['offline', 'online'], iconType;
 for(var i in iconTypeS) {
   iconType = iconTypeS[i];
   ICONS.ACTION.CURRENT[iconType] = "icons/" + iconType + ".png";
-  ICONS.FULL[iconType] = "icons/" + iconType + "_full.png";
-}
+  ICONS.FULL[iconType] = "icons/" + iconType + "_full.png";}
 
 // Models
 function Pomodoro(options) {
@@ -46,10 +31,8 @@ function Pomodoro(options) {
     timerOptions.duration = options.getDuration();
     this.running = true;
     this.currentTimer = new Pomodoro.Timer(this, timerOptions);
-    this.currentTimer.start();
-  }
-  this.stop = function () {if(this.running) {this.currentTimer.stop();}}
-}
+    this.currentTimer.start();}
+  this.stop = function () {if(this.running) {this.currentTimer.stop();}}}
 
 Pomodoro.Timer = function Timer(pomodoro, options) {
   var tickInterval, timer = this;
@@ -58,18 +41,12 @@ Pomodoro.Timer = function Timer(pomodoro, options) {
   this.start = function () {
     tickInterval = setInterval(tick, 1000);
     options.onStart(timer);
-    options.onTick(timer);
-  }
-  this.stop = function() {
-    this.timeRemaining = 0;
-  }
+    options.onTick(timer);}
+  this.stop = function() {this.timeRemaining = 0;}
   this.timeRemainingString = function () {
     if ((this.timeRemaining % 60) > 9) {
-      return Math.floor(this.timeRemaining / 60) + ":" + this.timeRemaining % 60;
-    } else {
-      return Math.floor(this.timeRemaining / 60) + ":0" + this.timeRemaining % 60;
-    }
-  }
+      return Math.floor(this.timeRemaining / 60) + ":" + this.timeRemaining % 60;} 
+    else {return Math.floor(this.timeRemaining / 60) + ":0" + this.timeRemaining % 60;}}
   function tick() {
     timer.timeRemaining--;
     options.onTick(timer);
@@ -77,8 +54,7 @@ Pomodoro.Timer = function Timer(pomodoro, options) {
 
 // Views
 function locationsMatch(location, listedPattern) {
-  return domainsMatch(location.domain, listedPattern.domain) && pathsMatch(location.path, listedPattern.path);
-}
+  return domainsMatch(location.domain, listedPattern.domain) && pathsMatch(location.path, listedPattern.path);}
 function parseLocation(location) {
   var components = location.split('/');
   return {domain: components.shift(), path: components.join('/')};}
@@ -105,7 +81,6 @@ function executeInAllBlockedTabs(action) {
     for(var i in windows) {
       tabs = windows[i].tabs;
       for(var j in tabs) {executeInTabIfBlocked(action, tabs[j]);}}});}
-
 //
 var notification, mainPomodoro = new Pomodoro({
   getDuration: function () { return 25 * 60 },
@@ -126,10 +101,8 @@ var notification, mainPomodoro = new Pomodoro({
     onTick: function (timer) {chrome.browserAction.setBadgeText({text: timer.timeRemainingString()});}}});
 
 executeInAllBlockedTabs('block');
-
 chrome.browserAction.onClicked.addListener(function (tab) {
   if(!mainPomodoro.running) {mainPomodoro.start();}
   else {mainPomodoro.stop();}});
-
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
   if(!mainPomodoro.running) {executeInTabIfBlocked('block', tab);}});
