@@ -38,6 +38,7 @@ Pomodoro.Timer = function Timer(pomodoro, options) {
   var tickInterval, timer = this;
   this.pomodoro = pomodoro;
   this.timeRemaining = options.duration;
+  this.warnings = 1;
   this.start = function () {
     tickInterval = setInterval(tick, 1000);
     options.onStart(timer);
@@ -45,12 +46,13 @@ Pomodoro.Timer = function Timer(pomodoro, options) {
   this.stop = function() {this.timeRemaining = 0;}
   this.timeRemainingString = function () {
     if ((this.timeRemaining % 60) > 9) {
-      return Math.floor(this.timeRemaining / 60) + ":" + this.timeRemaining % 60;} 
+      return Math.floor(this.timeRemaining / 60) + ":" + this.timeRemaining % 60;}
     else {return Math.floor(this.timeRemaining / 60) + ":0" + this.timeRemaining % 60;}}
   function tick() {
     timer.timeRemaining--;
     options.onTick(timer);
-    if(timer.timeRemaining <= 0) {clearInterval(tickInterval); pomodoro.onTimerEnd(timer); options.onEnd(timer);}}}
+    if((timer.timeRemaining <= 60) && (this.warnings == 1)) {RING.play(); this.warnings=0;}
+    if(timer.timeRemaining <= 0) {clearInterval(tickInterval); pomodoro.onTimerEnd(timer); options.onEnd(timer); this.warnings=1;}}}
 
 // Views
 function locationsMatch(location, listedPattern) {
@@ -98,7 +100,9 @@ var notification, mainPomodoro = new Pomodoro({
       for(var i in tabViews) {
 	tab = tabViews[i];
 	if(typeof tab.startCallbacks !== 'undefined') {tab.startCallbacks['online']();}}},
-    onTick: function (timer) {chrome.browserAction.setBadgeText({text: timer.timeRemainingString()});}}});
+    onTick: function (timer) {
+	chrome.browserAction.setBadgeText({text: timer.timeRemainingString()});
+    }}});
 
 executeInAllBlockedTabs('block');
 chrome.browserAction.onClicked.addListener(function (tab) {

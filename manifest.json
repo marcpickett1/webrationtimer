@@ -16,7 +16,7 @@
    "name": "__MSG_ext_name__",
    "options_page": "options.html",
    "permissions": [ "tabs", "<all_urls>" ],
-   "version": "0.0.2",
+   "version": "0.0.3",
    "web_accessible_resources": [
       "icons/online_full.png",
       "icons/offline_full.png"
