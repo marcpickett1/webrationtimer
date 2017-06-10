@@ -116,7 +116,7 @@ var notification, mainPomodoro = new Pomodoro({
 	if(typeof tab.startCallbacks !== 'undefined') {tab.startCallbacks['online']();}}},
     onTick: function (timer) {
       chrome.browserAction.setBadgeText({text: timer.timeRemainingString()});}}});
-// //
+//
 loadRingIfNecessary();
 executeInAllBlockedTabs('block');
 chrome.browserAction.onClicked.addListener(function (tab) {
