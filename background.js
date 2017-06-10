@@ -1,70 +1,10 @@
 // This is adapted from matchu's [Strict Workflow](https://github.com/matchu/Strict-Workflow)
 //  Constants
-var PREFS = defaultPrefs(), RING = new Audio("ding.ogg"), ringLoaded = false;
-function defaultPrefs() {
-  return {siteList: ['marcpickett1.github.io', '127.0.0.1:4000', 'marcpickett.com', 'mail.google.com', 'hangouts.google.com', 'extensions'],
-	  duration: 25 * 60,
-	  shouldRing: true}}
-function loadRingIfNecessary () {
-  if(!ringLoaded) {RING.onload = function () {console.log('ring loaded'); ringLoaded = true;}
-		   RING.load();}}
-var ICONS = {ACTION: {CURRENT: {}}, FULL: {},},
-iconTypeS = ['offline', 'online'], iconType;
-for(var i in iconTypeS) {
-  iconType = iconTypeS[i];
-  ICONS.ACTION.CURRENT[iconType] = "icons/" + iconType + ".png";
-  ICONS.FULL[iconType] = "icons/" + iconType + "_full.png";}
-// Models
-function Pomodoro(options) {
-  this.running = false;
-  this.timesLeft = 2;
-  this.marcnow = new Date().getTime() / 1000;
-  this.elapsed = 0
-  this.onTimerEnd = function (timer) {this.running = false;}
-  this.start = function () {
-    var timerOptions = {};
-    for(var key in options.timer) {timerOptions[key] = options.timer[key];}
-    timerOptions.duration = options.getDuration();
-    this.running = true;
-    this.timesLeft--;
-    this.currentTimer = new Pomodoro.Timer(this, timerOptions);
-    this.currentTimer.start();}
-  this.stop = function () {if(this.running) {this.currentTimer.stop();}}
-}
-Pomodoro.Timer = function Timer(pomodoro, options) {
-  var tickInterval, timer = this, tickInterval2;
-  this.pomodoro = pomodoro;
-  this.timeRemaining = options.duration;
-  tickInterval2 = setInterval(tick2, 1000)
-  this.warnings = 1;
-  this.start = function () {
-    tickInterval = setInterval(tick, 1000);
-    options.onStart(timer);
-    options.onTick(timer);}
-  this.stop = function() {this.timeRemaining = 0;}
-  this.timeRemainingString = function () {
-    if ((this.timeRemaining % 60) > 9) {return Math.floor(this.timeRemaining / 60) + ":" + this.timeRemaining % 60;}
-    else {return Math.floor(this.timeRemaining / 60) + ":0" + this.timeRemaining % 60;}}
-  function tick() {
-    timer.timeRemaining--;
-    options.onTick(timer);
-    if((timer.timeRemaining <= 60) && (this.warnings == 1)) {RING.play(); this.warnings=0;}
-    if(timer.timeRemaining <= 0) {clearInterval(tickInterval); pomodoro.onTimerEnd(timer); options.onEnd(timer); this.warnings=1;}}
-  function tick2() {
-    mynow = ((new Date().getTime() / 1000) - timer.pomodoro.marcnow)/(3600 * 12);
-    while (timer.pomodoro.elapsed < mynow) {
-      timer.pomodoro.elapsed++;
-      timer.pomodoro.timesLeft++;
-      // console.log('here3');
-      if (!timer.pomodoro.running) {
-	chrome.browserAction.setBadgeBackgroundColor({color: [0, 0, 0, 255]});
-	if (timer.pomodoro.timesLeft <= 0) {
-	  chrome.browserAction.setBadgeBackgroundColor({color: [192, 0, 0, 255]});
-	}
-	chrome.browserAction.setBadgeText({text: ''});
-	chrome.browserAction.setBadgeText({text: timer.pomodoro.timesLeft + ''});
-      }}}}
-// Views
+var PREFS = {siteList: ['marcpickett1.github.io', '127.0.0.1:4000', 'marcpickett.com', 'mail.google.com', 'hangouts.google.com', 'extensions'],
+	     duration: 25 * 60}
+var RING = new Audio("ding.ogg");
+RING.load();
+////////////////
 function locationsMatch(location, listedPattern) {
   return domainsMatch(location.domain, listedPattern.domain) && pathsMatch(location.path, listedPattern.path);}
 function parseLocation(location) {
@@ -92,32 +32,59 @@ function executeInAllBlockedTabs(action) {
     var tabs, tab, domain, listedDomain;
     for(var i in windows) {
       tabs = windows[i].tabs;
-      for(var j in tabs) {executeInTabIfBlocked(action, tabs[j]);}
-    }});}
-var notification, mainPomodoro = new Pomodoro({
-  getDuration: function () { return 25 * 60 },
-  timer: {
-    onEnd: function (timer) {
-      chrome.browserAction.setIcon({path: ICONS.ACTION.CURRENT['offline']});
-      chrome.browserAction.setBadgeBackgroundColor({color: [0, 0, 0, 255]});
-      if (timer.pomodoro.timesLeft <= 0) {
-	chrome.browserAction.setBadgeBackgroundColor({color: [192, 0, 0, 255]});
-      }
-      chrome.browserAction.setBadgeText({text: ''});
-      chrome.browserAction.setBadgeText({text: timer.pomodoro.timesLeft + ''});
-      executeInAllBlockedTabs('block');},
-    onStart: function (timer) {
-      chrome.browserAction.setIcon({path: ICONS.ACTION.CURRENT['online']});
-      chrome.browserAction.setBadgeBackgroundColor({color: [192, 0, 0, 255]});
-      executeInAllBlockedTabs('unblock');
-      var tabViews = chrome.extension.getViews({type: 'tab'}), tab;
-      for(var i in tabViews) {
-	tab = tabViews[i];
-	if(typeof tab.startCallbacks !== 'undefined') {tab.startCallbacks['online']();}}},
-    onTick: function (timer) {
-      chrome.browserAction.setBadgeText({text: timer.timeRemainingString()});}}});
+      for(var j in tabs) {executeInTabIfBlocked(action, tabs[j]);}}});}
+////////////////
+function setIconText (timer) {
+  chrome.browserAction.setIcon({path: 'icons/offline.png'});
+  chrome.browserAction.setBadgeBackgroundColor({color: [0, 0, 0, 255]});
+  if (timer.pomodoro.timesLeft <= 0) {chrome.browserAction.setBadgeBackgroundColor({color: [192, 0, 0, 255]});}
+  chrome.browserAction.setBadgeText({text: ''});
+  chrome.browserAction.setBadgeText({text: timer.pomodoro.timesLeft + ''});}
+function onEnd (timer) {
+  setIconText(timer);
+  executeInAllBlockedTabs('block');}
+function onStart (timer) {
+  chrome.browserAction.setIcon({path: 'icons/online.png'});
+  chrome.browserAction.setBadgeBackgroundColor({color: [192, 0, 0, 255]});
+  executeInAllBlockedTabs('unblock');
+  var tabViews = chrome.extension.getViews({type: 'tab'}), tab;
+  for(var i in tabViews) {
+    tab = tabViews[i];
+    if(typeof tab.startCallbacks !== 'undefined') {tab.startCallbacks['online']();}}}
+function onTick (timer) {chrome.browserAction.setBadgeText({text: formatTime(timer.timeRemaining)});}
+function formatTime(tr) {if ((tr % 60) > 9) {return Math.floor(tr/60)+":"+ tr%60;} else {return Math.floor(tr/60)+":0" + tr%60;}}
+// console.log('here3');
+function Pomodoro() {
+  this.running = false; this.timesLeft = 1; this.elapsed = 0
+  this.marcnow = new Date().getTime() / 1000;
+  this.start = function () {
+    this.running = true;
+    this.timesLeft--;
+    this.currentTimer = new PomodoroTimer(this);
+    this.currentTimer.start();}
+  this.stop = function () {if(this.running) {this.currentTimer.stop();}}
+  this.currentTimer = new PomodoroTimer(this);
+}
+function PomodoroTimer(pomodoro) {
+  var tickInterval, tickInterval2 = setInterval(tick2, 1000), timer = this;
+  this.pomodoro = pomodoro;
+  this.timeRemaining = PREFS.duration;
+  this.warnings = 1;
+  this.start = function() {tickInterval = setInterval(tick, 1000); onStart(this); onTick(this);}
+  this.stop = function() {this.timeRemaining = 0;}
+  function tick() {
+    timer.timeRemaining--;
+    onTick(timer);
+    if((timer.timeRemaining <= 60) && (this.warnings == 1)) {RING.play(); this.warnings=0;}
+    if(timer.timeRemaining <= 0) {clearInterval(tickInterval); pomodoro.running = false; onEnd(timer); this.warnings=1;}}
+  function tick2() {
+    mynow = ((new Date().getTime() / 1000) - timer.pomodoro.marcnow)/(3600 * 12);
+    while (timer.pomodoro.elapsed < mynow) {
+      timer.pomodoro.elapsed++;
+      timer.pomodoro.timesLeft++;
+      if (!timer.pomodoro.running) {setIconText(timer);}}}}
 //
-loadRingIfNecessary();
+var mainPomodoro = new Pomodoro();
 executeInAllBlockedTabs('block');
 chrome.browserAction.onClicked.addListener(function (tab) {
   if(!mainPomodoro.running) {mainPomodoro.start();}
