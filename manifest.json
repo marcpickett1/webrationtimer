@@ -5,18 +5,17 @@
    "browser_action": {
       "default_icon": "icons/offline.png"
    },
-   "default_locale": "en",
-   "description": "__MSG_ext_description__",
+   "description": "Ration your web usage.",
    "icons": {
       "128": "icons/icon128.png",
       "16": "icons/icon16.png",
       "48": "icons/icon48.png"
    },
    "manifest_version": 2,
-   "name": "__MSG_ext_name__",
+   "name": "Web Ration Timer",
    "options_page": "options.html",
    "permissions": [ "tabs", "<all_urls>" ],
-   "version": "0.0.5",
+   "version": "0.0.7",
    "web_accessible_resources": [
       "icons/online_full.png",
       "icons/offline_full.png"

@@ -1,6 +1,6 @@
 // This is adapted from matchu's [Strict Workflow](https://github.com/matchu/Strict-Workflow)
 //  Constants
-var PREFS = {duration: 25, siteList: ['marcpickett1.github.io', '127.0.0.1:4000', 'marcpickett.com', 'mail.google.com', 'hangouts.google.com', 'extensions', 'calendar.google.com']}
+var PREFS = {duration: 25*60, siteList: ['marcpickett1.github.io', '127.0.0.1:4000', 'marcpickett.com', 'mail.google.com', 'hangouts.google.com', 'extensions', 'calendar.google.com']}
 var RING = new Audio("ding.ogg");
 RING.load();
 ////////////////
@@ -67,7 +67,7 @@ function Pomodoro() {
 function PomodoroTimer(pomodoro) {
   var tickInterval, tickInterval2 = setInterval(tick2, 1000), timer = this;
   this.pomodoro = pomodoro;
-  this.timeRemaining = PREFS.duration * 60;
+  this.timeRemaining = PREFS.duration;
   this.warnings = 1;
   this.start = function() {tickInterval = setInterval(tick, 1000); onStart(this); onTick(this);}
   this.stop = function() {this.timeRemaining = 0;}

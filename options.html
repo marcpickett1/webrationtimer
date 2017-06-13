@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>These don't work, sorry!</title>
+    <title>Web Ration Timer Options</title>
 
     <link rel="stylesheet" href="chrome://resources/css/widgets.css">
     <style type="text/css">
@@ -99,53 +99,16 @@
     </style>
   </head>
   <body>
-    <h1>These options don't work.  Sorry!</h1>
-    <p id="work-block-info" data-i18n="options_work_block_info"></p>
+    <h1>These don't work yet!  Sorry.</h1>
+    <h2>Allow the following domains:</h2>
     <form id="options-form">
       <div id="site-list-wrapper">
-        <header id="site-list-header">
-          <select id="blacklist-or-whitelist">
-            <option data-i18n="options_blacklist_verb"></option>
-            <option data-i18n="options_whitelist_verb"></option>
-          </select>
-          <span data-i18n="options_site_list_header"></span>
-        </header>
+        <header id="site-list-header"> </header>
         <textarea id="site-list"></textarea>
-        <p class="note" data-i18n="options_site_list_info"></p>
-        <p class="note" data-i18n="options_site_list_syntax"></p>
       </div>
-      <div id="durations">
-        <label for="work-duration">
-          <span data-i18n="work" data-i18n-caps></span>:
-        </label>
-        <input id="work-duration" type="text" size="2" />
-        <span class="minutes" data-i18n="minutes"></span>
-        <label for="break-duration">
-          <span data-i18n="break" data-i18n-caps></span>:
-        </label>
-        <input id="break-duration" type="text" size="2" />
-        <span class="minutes" data-i18n="minutes"></span>
-        <span id="time-format-error" data-i18n="options_time_format_error"></span>
-      </div>
-      <div>
-        <input id="show-notifications" type="checkbox" />
-        <label for="show-notifications" data-i18n="options_show_notifications"></label>
-      </div>
-      <div>
-        <input id="should-ring" type="checkbox" />
-        <label for="should-ring" data-i18n="options_should_ring"></label>
-      </div>
-      <div>
-        <input id="click-restarts" type="checkbox" />
-        <label for="click-restarts">
-          <span data-i18n="options_click_restarts"></span>
-          <p class="note" data-i18n="options_click_restarts_note"></p>
-        </label>
-      </div>
-      <button type="submit" id="save-button" data-i18n="options_save_changes"></button>
-      <span id="save-successful" data-i18n="options_save_successful"></span>
+      <button type="submit" id="save-button">Save changes</button>
+      <span id="save-successful">save successful</span>
     </form>
     <script type="text/javascript" src="options.js"></script>
   </body>
 </html>
-
