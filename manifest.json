@@ -5,6 +5,7 @@
    "browser_action": {
       "default_icon": "icons/offline.png"
    },
+   "default_locale": "en",
    "description": "Ration your web usage.",
    "icons": {
       "128": "icons/icon128.png",
