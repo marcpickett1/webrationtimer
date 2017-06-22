@@ -1,8 +1,13 @@
 // This is adapted from matchu's [Strict Workflow](https://github.com/matchu/Strict-Workflow)
 //  Constants
-var PREFS = {duration: 25, siteList: ['marcpickett1.github.io', '127.0.0.1:4000', 'marcpickett.com', 'mail.google.com', 'hangouts.google.com', 'extensions', 'calendar.google.com']}
-var RING = new Audio("ding.ogg");
+var MARCPREFS = {siteList: ['marcpickett1.github.io', '127.0.0.1:4000', 'marcpickett.com', 'mail.google.com', 'hangouts.google.com', 'chrome-extension', 'extensions', 'calendar.google.com', 'stackoverflow.com', 'stackexchange.com', 'photos.google.com']};
+var PREFS = loadPrefs(), RING = new Audio("ding.ogg");
 RING.load();
+////////////////
+function loadPrefs() {
+  if(typeof localStorage['prefs'] !== 'undefined') {return JSON.parse(localStorage['prefs']);}
+  else {savePrefs(MARCPREFS); return MARCPREFS}}
+function savePrefs(prefs) {localStorage['prefs'] = JSON.stringify(prefs); PREFS = prefs}
 ////////////////
 function locationsMatch(location, listedPattern) {
   return domainsMatch(location.domain, listedPattern.domain) && pathsMatch(location.path, listedPattern.path);}
@@ -22,7 +27,7 @@ function isLocationBlocked(location) {
     if(locationsMatch(location, listedPattern)) {return false;}}
   return true;}
 function executeInTabIfBlocked(action, tab) {
-  var file = "content_scripts/" + action + ".js", location;
+  var file = action + ".js", location;
   location = tab.url.split('://');
   location = parseLocation(location[1]);
   if(isLocationBlocked(location)) {chrome.tabs.executeScript(tab.id, {file: file});}}
@@ -67,7 +72,7 @@ function Pomodoro() {
 function PomodoroTimer(pomodoro) {
   var tickInterval, tickInterval2 = setInterval(tick2, 1000), timer = this;
   this.pomodoro = pomodoro;
-  this.timeRemaining = PREFS.duration * 60;
+  this.timeRemaining = 25 * 60;
   this.warnings = 1;
   this.start = function() {tickInterval = setInterval(tick, 1000); onStart(this); onTick(this);}
   this.stop = function() {this.timeRemaining = 0;}

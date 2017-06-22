@@ -5,10 +5,8 @@ for(var i = 0; i < localizedElements.length; i++) {
   message = chrome.i18n.getMessage(el.getAttribute('data-i18n'));
   // Capitalize first letter if element has attribute data-i18n-caps
   if(el.hasAttribute('data-i18n-caps')) {
-    message = message.charAt(0).toUpperCase() + message.substr(1);
-  }
-  el.innerHTML = message;
-}
+    message = message.charAt(0).toUpperCase() + message.substr(1);}
+  el.innerHTML = message;}
 //  Form interaction
 var form = document.getElementById('options-form'),
   siteListEl = document.getElementById('site-list'),
@@ -16,12 +14,9 @@ var form = document.getElementById('options-form'),
   timeFormatErrorEl = document.getElementById('time-format-error'),
   background = chrome.extension.getBackgroundPage(),
   startCallbacks = {};
-var TIME_REGEX = /^([0-9]+)(:([0-9]{2}))?$/;
 form.onsubmit = function () {
   console.log("form submitted");
-  background.setPrefs({
-    siteList:           siteListEl.value.split(/\r?\n/),
-  })
+  background.savePrefs({siteList: siteListEl.value.split(/\r?\n/),})
   saveSuccessfulEl.className = 'show';
   return false;
 }
@@ -31,4 +26,3 @@ function formAltered() {
   timeFormatErrorEl.removeAttribute('class');
 }
 siteListEl.value = background.PREFS.siteList.join("\n");
-

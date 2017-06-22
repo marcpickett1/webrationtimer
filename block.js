@@ -1,13 +1,13 @@
 (function () {
   function ready() {
-    if(!document.getElementById('matchu-pomodoro-extension-overlay')) {
+    if(!document.getElementById('marctar-pomodoro-extension-overlay')) {
       var overlay = document.createElement('div'), lines = [
         "Offline!",
         "Git to work!"
         // chrome.i18n.getMessage("site_blocked_info"),
         // chrome.i18n.getMessage("site_blocked_motivator")
       ], p, img = document.createElement('img');
-      overlay.id = 'matchu-pomodoro-extension-overlay';
+      overlay.id = 'marctar-pomodoro-extension-overlay';
       overlay.style.position = 'fixed';
       overlay.style.left = 0;
       overlay.style.top = 0;
