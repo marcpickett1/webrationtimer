@@ -1,7 +1,7 @@
-// This is adapted from matchu's [Strict Workflow](https://github.com/matchu/Strict-Workflow)
-//  Constants
+// Adapted from matchu's [Strict Workflow](https://github.com/matchu/Strict-Workflow)
 var MARCPREFS = {siteList: ['marcpickett1.github.io', '127.0.0.1:4000', 'marcpickett.com', 'mail.google.com', 'hangouts.google.com', 'chrome-extension', 'extensions', 'calendar.google.com', 'stackoverflow.com', 'stackexchange.com', 'photos.google.com']};
 var PREFS = loadPrefs(), RING = new Audio("ding.ogg");
+var DURATION = 25, RATIONSPERDAY = 3;
 RING.load();
 ////////////////
 function loadPrefs() {
@@ -41,9 +41,9 @@ function executeInAllBlockedTabs(action) {
 function setIconText(timer) {
   chrome.browserAction.setIcon({path: 'icons/offline.png'});
   chrome.browserAction.setBadgeBackgroundColor({color: [0, 0, 0, 255]});
-  if (timer.pomodoro.timesLeft <= 0) {chrome.browserAction.setBadgeBackgroundColor({color: [192, 0, 0, 255]});}
+  if (timer.pomodoro.rationsLeft <= 0) {chrome.browserAction.setBadgeBackgroundColor({color: [192, 0, 0, 255]});}
   chrome.browserAction.setBadgeText({text: ''});
-  chrome.browserAction.setBadgeText({text: timer.pomodoro.timesLeft + ''});}
+  chrome.browserAction.setBadgeText({text: timer.pomodoro.rationsLeft + ''});}
 function onEnd(timer) {
   setIconText(timer);
   executeInAllBlockedTabs('block');}
@@ -59,20 +59,20 @@ function onTick(timer) {chrome.browserAction.setBadgeText({text: formatTime(time
 function formatTime(tr) {if ((tr % 60) > 9) {return Math.floor(tr/60)+":"+ tr%60;} else {return Math.floor(tr/60)+":0" + tr%60;}}
 // console.log('here3');
 function Pomodoro() {
-  this.running = false; this.timesLeft = 1; this.elapsed = 0
+  this.running = false; this.rationsLeft = RATIONSPERDAY; this.elapsed = 0
   this.marcnow = new Date().getTime() / 1000;
   this.start = function() {
     this.running = true;
-    this.timesLeft--;
+    this.rationsLeft--;
     this.currentTimer = new PomodoroTimer(this);
     this.currentTimer.start();}
   this.stop = function() {if (this.running) {this.currentTimer.stop();}}
-  onEnd(new PomodoroTimer(this));
+  this.start(); this.stop(); // Bit of a hack here to get things started.
 }
 function PomodoroTimer(pomodoro) {
   var tickInterval, tickInterval2 = setInterval(tick2, 1000), timer = this;
   this.pomodoro = pomodoro;
-  this.timeRemaining = 25 * 60;
+  this.timeRemaining = DURATION * 60;
   this.warnings = 1;
   this.start = function() {tickInterval = setInterval(tick, 1000); onStart(this); onTick(this);}
   this.stop = function() {this.timeRemaining = 0;}
@@ -82,10 +82,10 @@ function PomodoroTimer(pomodoro) {
     if(timer.timeRemaining <= 60 && this.warnings == 1) {RING.play(); this.warnings=0;}
     if(timer.timeRemaining <= 0) {clearInterval(tickInterval); pomodoro.running = false; onEnd(timer); this.warnings=1;}}
   function tick2() {
-    mynow = ((new Date().getTime() / 1000) - timer.pomodoro.marcnow)/(3600 * 12);
+    mynow = ((new Date().getTime() / 1000) - timer.pomodoro.marcnow)/(3600 * 24 / RATIONSPERDAY);
     while (timer.pomodoro.elapsed < mynow) {
       timer.pomodoro.elapsed++;
-      timer.pomodoro.timesLeft++;
+      timer.pomodoro.rationsLeft++;
       if (!timer.pomodoro.running) {setIconText(timer);}}}}
 //
 var mainPomodoro = new Pomodoro();
