@@ -1,11 +1,9 @@
 # Web Ration Timer
 
-I wrote this for myself.
-
 You can only surf the web when the timer's running.
 
-Adapted from matchu's [Strict Workflow](https://github.com/matchu/Strict-Workflow)
-
+Source is [here](https://github.com/marcpickett1/webrationtimer).
+Adapted from matchu's [Strict Workflow](https://github.com/matchu/Strict-Workflow).
 
 ``` My allowed domains
 marcpickett1.github.io
