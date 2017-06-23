@@ -1,8 +1,6 @@
 // Adapted from matchu's [Strict Workflow](https://github.com/matchu/Strict-Workflow)
-var MARCPREFS = {siteList: ['marcpickett1.github.io', '127.0.0.1:4000', 'marcpickett.com', 'mail.google.com', 'hangouts.google.com', 'chrome-extension', 'extensions', 'calendar.google.com', 'stackoverflow.com', 'stackexchange.com', 'photos.google.com']};
-var PREFS = loadPrefs(), RING = new Audio("ding.ogg");
-var DURATION = 25, RATIONSPERDAY = 3;
-RING.load();
+var MARCPREFS = {siteList: ['extensions', 'calendar.google.com', 'stackoverflow.com', 'stackexchange.com']};
+var DURATION = 25, RATIONSPERDAY = 3, PREFS = loadPrefs(), RING = new Audio("ding.ogg");
 ////////////////
 function loadPrefs() {
   if(typeof localStorage['prefs'] !== 'undefined') {return JSON.parse(localStorage['prefs']);}
@@ -57,7 +55,7 @@ function onStart(timer) {
     if(typeof tab.startCallbacks !== 'undefined') {tab.startCallbacks['online']();}}}
 function onTick(timer) {chrome.browserAction.setBadgeText({text: formatTime(timer.timeRemaining)});}
 function formatTime(tr) {if ((tr % 60) > 9) {return Math.floor(tr/60)+":"+ tr%60;} else {return Math.floor(tr/60)+":0" + tr%60;}}
-// console.log('here3');
+////////////////
 function Pomodoro() {
   this.running = false; this.rationsLeft = RATIONSPERDAY; this.elapsed = 0
   this.marcnow = new Date().getTime() / 1000;
@@ -67,8 +65,7 @@ function Pomodoro() {
     this.currentTimer = new PomodoroTimer(this);
     this.currentTimer.start();}
   this.stop = function() {if (this.running) {this.currentTimer.stop();}}
-  this.start(); this.stop(); // Bit of a hack here to get things started.
-}
+  this.start(); this.stop();} // Bit of a hack here to get things started.
 function PomodoroTimer(pomodoro) {
   var tickInterval, tickInterval2 = setInterval(tick2, 1000), timer = this;
   this.pomodoro = pomodoro;
@@ -87,7 +84,8 @@ function PomodoroTimer(pomodoro) {
       timer.pomodoro.elapsed++;
       timer.pomodoro.rationsLeft++;
       if (!timer.pomodoro.running) {setIconText(timer);}}}}
-//
+// console.log('Starting');
+RING.load();
 var mainPomodoro = new Pomodoro();
 chrome.browserAction.onClicked.addListener(function(tab) {if(!mainPomodoro.running) {mainPomodoro.start();} else {mainPomodoro.stop();}});
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {if(!mainPomodoro.running) {executeInTabIfBlocked('block', tab);}});
