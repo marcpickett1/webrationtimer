@@ -16,7 +16,7 @@
   "name": "Web Ration Timer",
   "options_page": "options.html",
   "permissions": [ "tabs", "<all_urls>" ],
-  "version": "0.0.9",
+  "version": "0.1.0",
   "web_accessible_resources": [
     "icons/online_full.png",
     "icons/offline_full.png"

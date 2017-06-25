@@ -1,12 +1,8 @@
 (function () {
   function ready() {
     if(!document.getElementById('marctar-pomodoro-extension-overlay')) {
-      var overlay = document.createElement('div'), lines = [
-        "Offline!",
-        "Git to work!"
-        // chrome.i18n.getMessage("site_blocked_info"),
-        // chrome.i18n.getMessage("site_blocked_motivator")
-      ], p, img = document.createElement('img');
+      var overlay = document.createElement('div'), p, img = document.createElement('img');
+      var lines = ["Offline!", "Git to work!"];
       overlay.id = 'marctar-pomodoro-extension-overlay';
       overlay.style.position = 'fixed';
       overlay.style.left = 0;
@@ -26,14 +22,8 @@
         p = document.createElement('p');
         p.innerText = lines[i];
         p.style.margin = '0 0 .5em 0';
-        overlay.appendChild(p);
-      }
-      document.body.appendChild(overlay);
-    }
-  }
+        overlay.appendChild(p);}
+      document.body.appendChild(overlay);}}
   if(typeof document === 'undefined') {
     window.addEventListener("DOMContentLoaded", ready);
-  } else {
-    ready();
-  }
-})();
+  } else {ready();}})();

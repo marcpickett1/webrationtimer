@@ -61,15 +61,17 @@ function Pomodoro() {
   this.marcnow = new Date().getTime() / 1000;
   this.start = function() {
     this.running = true;
-    this.rationsLeft--;
-    this.currentTimer = new PomodoroTimer(this);
+    if (this.rationsLeft <= 0) {this.currentTimer = new PTimer(this, 1);}
+    else {
+      this.rationsLeft--;
+      this.currentTimer = new PTimer(this, DURATION);}
     this.currentTimer.start();}
   this.stop = function() {if (this.running) {this.currentTimer.stop();}}
   this.start(); this.stop();} // Bit of a hack here to get things started.
-function PomodoroTimer(pomodoro) {
+function PTimer(pomodoro, duration) {
   var tickInterval, tickInterval2 = setInterval(tick2, 1000), timer = this;
   this.pomodoro = pomodoro;
-  this.timeRemaining = DURATION * 60;
+  this.timeRemaining = duration * 60;
   this.warnings = 1;
   this.start = function() {tickInterval = setInterval(tick, 1000); onStart(this); onTick(this);}
   this.stop = function() {this.timeRemaining = 0;}
